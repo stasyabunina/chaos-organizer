@@ -1,5 +1,5 @@
 # 📋 Chaos Organizer
-![CI](https://github.com/stasyabunina/ahj-diploma/actions/workflows/web.yml/badge.svg)
+![CI](https://github.com/stasyabunina/chaos-organizer/actions/workflows/web.yml/badge.svg)
 
 Chaos Organizer - глобальный бот-органайзер, предназначенный для хранения информации, поиска и других сервисов: скачивания файлов, уведомления и интеграции с внешними сервисами.
 
