@@ -37,14 +37,14 @@ export default class Message {
       .getHours()
       .toString()
       .padStart(2, "0")}:${newDate
-      .getMinutes()
-      .toString()
-      .padStart(2, "0")} ${newDate
-      .getDate()
-      .toString()
-      .padStart(2, "0")}.${month
-      .toString()
-      .padStart(2, "0")}.${newDate.getFullYear()}`;
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")} ${newDate
+          .getDate()
+          .toString()
+          .padStart(2, "0")}.${month
+            .toString()
+            .padStart(2, "0")}.${newDate.getFullYear()}`;
 
     const favoriteMessageBtn = document.createElement("button");
     favoriteMessageBtn.type = "button";
@@ -150,7 +150,19 @@ export default class Message {
     this.element = li;
     this.favoriteBtn = favoriteMessageBtn;
 
-    moreBtn.addEventListener("click", () => this.showMoreOptions());
+    moreBtn.addEventListener("click", () => {
+      if (document.querySelector(".message__more-list")) {
+        if (document.querySelector(".message__more-list").previousElementSibling !== moreBtn) {
+          document.querySelector(".message__more-list").remove();
+          this.showMoreOptions()
+        } else if (document.querySelector(".message__more-list").previousElementSibling === moreBtn) {
+          document.querySelector(".message__more-list").remove();
+        }
+      } else if (!document.querySelector(".message__more-list")) {
+        this.showMoreOptions()
+      }
+    });
+
     favoriteMessageBtn.addEventListener("click", (e) =>
       this.favoriteMessage(e)
     );
@@ -168,10 +180,6 @@ export default class Message {
     }
 
     if (document.querySelectorAll(".message").length <= 10) {
-      if (obj.simpleBarElement) {
-        obj.simpleBarElement.scrollTop = 31;
-      }
-
       if (loadData) {
         if (loadData.tagName === "VIDEO") {
           loadData.addEventListener("loadedmetadata", () => {
@@ -295,7 +303,7 @@ export default class Message {
 
       const progress = (tempSliderValue / slider.max) * 100;
 
-      video.currentTime = slider.value / 100; /////////// НЕ РАБОТАЕТ
+      video.currentTime = slider.value / 100;
 
       slider.style.background = `linear-gradient(to right, #DC7388 ${progress}%, #d3d3d3 ${progress}%)`;
     });
@@ -397,14 +405,14 @@ export default class Message {
     playBtn.addEventListener("click", play);
 
     forwardBtn.addEventListener("click", () => {
-      video.currentTime += 5; ///// НЕ РАБОТАЕТ
+      video.currentTime += 5;
       slider.value = video.currentTime * 100;
       const per = slider.value / video.duration;
       slider.style.background = `linear-gradient(to right, #DC7388 ${per}%, #d3d3d3 ${per}%)`;
     });
 
     backwardBtn.addEventListener("click", () => {
-      video.currentTime -= 5; ///// НЕ РАБОТАЕТ
+      video.currentTime -= 5;
       slider.value = video.currentTime * 100;
       const per = slider.value / video.duration;
       slider.style.background = `linear-gradient(to right, #DC7388 ${per}%, #d3d3d3 ${per}%)`;
@@ -424,9 +432,8 @@ export default class Message {
       } else {
         volumeSlider.value = this.videoVolume * 100;
         video.volume = this.videoVolume;
-        volumeSlider.style.background = `linear-gradient(to right, #DC7388 ${
-          this.videoVolume * 100
-        }%, #d3d3d3 ${this.videoVolume * 100}%)`;
+        volumeSlider.style.background = `linear-gradient(to right, #DC7388 ${this.videoVolume * 100
+          }%, #d3d3d3 ${this.videoVolume * 100}%)`;
         volumeBtn
           .querySelector(".video__volume-svg-up-path")
           .classList.remove("hidden");
@@ -490,7 +497,7 @@ export default class Message {
         audio.play();
         updateSlider = setInterval(function () {
           displayDuration(audio.currentTime);
-          rangeSlider.style.width =
+          rangeSliderWrapper.style.width =
             (audio.currentTime / audio.duration) * 100 + "%";
         }, 10);
         playBtn
@@ -567,12 +574,15 @@ export default class Message {
 
     range.addEventListener("input", () => {
       const per = range.value / audio.duration;
-      rangeSlider.style.width = per + "%";
-      audio.currentTime = (per / 100) * audio.duration; ////// НЕ РАБОТАЕТ
+      rangeSliderWrapper.style.width = per + "%";
+      audio.currentTime = (per / 100) * audio.duration;
     });
 
     const rangeWrapper = document.createElement("div");
     rangeWrapper.classList.add("audio__input-wrapper");
+
+    const rangeSliderWrapper = document.createElement("div");
+    rangeSliderWrapper.classList.add("audio__input-slider-wrapper");
 
     const rangeSlider = document.createElement("div");
     rangeSlider.classList.add("audio__input-slider");
@@ -581,7 +591,8 @@ export default class Message {
     content.append(audioContent);
     audioContent.append(rangeWrapper);
     rangeWrapper.append(range);
-    rangeWrapper.append(rangeSlider);
+    rangeWrapper.append(rangeSliderWrapper);
+    rangeSliderWrapper.append(rangeSlider);
     audioContent.append(audioDuration);
 
     audio.addEventListener("ended", () => {
@@ -660,10 +671,6 @@ export default class Message {
   }
 
   showMoreOptions() {
-    if (document.querySelector(".message__more-list")) {
-      document.querySelector(".message__more-list").remove();
-    }
-
     const ul = document.createElement("ul");
     ul.classList.add("message__more-list");
 
@@ -715,16 +722,6 @@ export default class Message {
     pinMessageBtn.append(pinMessageText);
     downloadLi.append(downloadBtn);
     downloadBtn.append(downloadText);
-
-    document.addEventListener("click", (e) => {
-      let target = e.target;
-      if (
-        !target.closest(".message__more-list") &&
-        !target.closest(".message__more-btn")
-      ) {
-        ul.remove();
-      }
-    });
 
     if (this.data.author === "bot") {
       ul.classList.add("message__more-list_left");

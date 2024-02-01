@@ -616,15 +616,23 @@ canvas {
   width: 15px;
 }
 
-.audio__input-slider {
+.audio__input-slider-wrapper {
   height: 100%;
   width: 0%;
   position: absolute;
   top: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.audio__input-slider {
+  height: 100%;
+  width: calc(100% + 531px);
   background-image: url("../img/audio-pink.png");
   background-color: transparent;
   background-position: 0% 0%;
   background-size: auto 100%;
+  background-repeat: repeat;
   pointer-events: none;
 }
 

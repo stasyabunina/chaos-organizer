@@ -56,4 +56,12 @@ export default class WidgetAPI {
       method: "POST",
     });
   }
+
+  // getVideoImage(data) {
+  //   return fetch(this.url + "/video-image", {
+  //     body: JSON.stringify(data),
+  //     method: "GET",
+  //     headers: this.contentTypeHeader,
+  //   });
+  // }
 }

@@ -127,6 +127,7 @@ export default class Pinned {
           const video = document
             .querySelector("#pinned")
             .querySelector("video");
+
           const imgWrapper = document.createElement("div");
           imgWrapper.classList.add("pinned__img-wrapper");
           info.prepend(imgWrapper);

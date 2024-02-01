@@ -121,6 +121,13 @@ export default class Widget {
     });
 
     this.changeLanguage();
+
+    document.addEventListener("click", (e) => {
+      let target = e.target;
+      if (!target.closest(".message__more-list") && !target.closest(".message__more-btn") && document.querySelector(".message__more-list")) {
+        document.querySelector(".message__more-list").remove();
+      }
+    });
   }
 
   loadMessages(messages) {
@@ -134,6 +141,10 @@ export default class Widget {
           newMessage.render(this.list, "append");
 
           this.loadedMessages.push(message);
+
+          if (obj.simpleBarElement) {
+            obj.simpleBarElement.scrollTop = 31;
+          }
         }
       } else {
         this.loadedMessagesLength = 10;
@@ -145,6 +156,10 @@ export default class Widget {
           newMessage.render(this.list, "append");
 
           this.loadedMessages.push(message);
+
+          if (obj.simpleBarElement) {
+            obj.simpleBarElement.scrollTop = 31;
+          }
         }
       }
     } else {
