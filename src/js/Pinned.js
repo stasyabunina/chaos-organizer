@@ -124,25 +124,18 @@ export default class Pinned {
 
           info.prepend(file);
         } else if (this.data.type === "video") {
-          const video = document
-            .querySelector("#pinned")
-            .querySelector("video");
+          const response = await this.api.createVideoImage({ filename: this.data.file });
 
-          const imgWrapper = document.createElement("div");
-          imgWrapper.classList.add("pinned__img-wrapper");
-          info.prepend(imgWrapper);
-
-          const capture = () => {
-            const canvas = document.createElement("canvas");
-            imgWrapper.prepend(canvas);
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas
-              .getContext("2d")
-              .drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-          };
-
-          capture();
+          if (response.ok) {
+            const imgWrapper = document.createElement("div");
+            imgWrapper.classList.add("pinned__img-wrapper");
+            const img = document.createElement("img");
+            img.classList.add("pinned__img");
+            img.src = `${this.url}/${this.data.file.split('.')[0]}_1.jpg`;
+            img.alt = "Video preview";
+            info.prepend(imgWrapper);
+            imgWrapper.prepend(img);
+          }
         }
       }
 
