@@ -769,7 +769,7 @@ export default class Message {
     this.element.setAttribute("id", "pinned");
   }
 
-  downloadMessage(evt) {
+  async downloadMessage(evt) {
     if (document.querySelector(".message__more-list")) {
       document.querySelector(".message__more-list").remove();
     }

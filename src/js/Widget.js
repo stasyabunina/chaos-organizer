@@ -9,6 +9,7 @@ import obj from "./obj";
 import scrollToBottom from "./scrollToBottom";
 import "simplebar/dist/simplebar.css";
 import SimpleBar from "simplebar";
+import FileContainer from "./FileContainer";
 
 import ResizeObserver from "resize-observer-polyfill";
 
@@ -22,7 +23,7 @@ import catImg6 from "../img/valentin-muller-vp79HHUIahQ-unsplash.jpg";
 export default class Widget {
   constructor(element) {
     this.element = element;
-    this.url = "https://chaos-organizer-eoxz.onrender.com";
+    this.url = "http://localhost:7070";
     this.api = new WidgetAPI(this.url);
     this.loadedMessages = [];
   }
@@ -67,12 +68,50 @@ export default class Widget {
 
   async init() {
     this.bindToDOM();
+    this.addCustomScroll();
+    this.initEventListeners();
+    this.declareFocusedElement();
 
+    await this.getMessages();
+    this.loadMessages(this.messages);
+    obj.categoryMessages = this.messages;
+    for (const message of this.messages) {
+      if (message.isPinned) {
+        const newPinned = new Pinned(message, this.api, this.url);
+        newPinned.render();
+      }
+    }
+
+    this.fileContainer = new FileContainer(this.fileUploadContainerWrapper);
+    this.renderCategories(this.messages);
+
+    this.changeLanguage();
+
+    document.addEventListener("click", (e) => {
+      let target = e.target;
+      if (!target.closest(".message__more-list") && !target.closest(".message__more-btn") && document.querySelector(".message__more-list")) {
+        document.querySelector(".message__more-list").remove();
+      }
+    });
+  }
+
+  addCustomScroll() {
     window.ResizeObserver = ResizeObserver;
 
     const simpleBar = new SimpleBar(this.scrolledDiv);
     obj.simpleBarElement = simpleBar.getScrollElement();
 
+    obj.simpleBarElement.addEventListener("scroll", () => {
+      if (
+        obj.simpleBarElement.scrollTop <= 30 &&
+        obj.simpleBarElement.scrollTop !== 0
+      ) {
+        this.loadMoreMessages();
+      }
+    });
+  }
+
+  initEventListeners() {
     this.sendForm.addEventListener("submit", (e) => this.sendMessage(e));
     this.searchForm.addEventListener("submit", (e) => this.searchMessage(e));
     this.pickEmojiBtn.addEventListener("click", () => this.showEmoji());
@@ -84,50 +123,11 @@ export default class Widget {
     this.sidebarBtn.addEventListener("click", () => this.showSidebar());
     this.closeSidebarBtn.addEventListener("click", () => this.closeSidebar());
 
-    this.fileUploadBtn.addEventListener("click", () =>
-      this.showFileUploadContainer()
-    );
-
     const inputContainerWidth = this.inputContainer.clientWidth;
     this.inputContainer.style.maxWidth = "0px";
     this.searchBtn.addEventListener("click", () =>
       this.openSearch(inputContainerWidth)
     );
-
-    this.declareFocusedElement();
-
-    await this.getMessages();
-
-    this.loadMessages(this.messages);
-
-    obj.categoryMessages = this.messages;
-
-    this.renderCategories(this.messages);
-
-    for (const message of this.messages) {
-      if (message.isPinned) {
-        const newPinned = new Pinned(message, this.api, this.url);
-        newPinned.render();
-      }
-    }
-
-    obj.simpleBarElement.addEventListener("scroll", () => {
-      if (
-        obj.simpleBarElement.scrollTop <= 30 &&
-        obj.simpleBarElement.scrollTop !== 0
-      ) {
-        this.loadMoreMessages();
-      }
-    });
-
-    this.changeLanguage();
-
-    document.addEventListener("click", (e) => {
-      let target = e.target;
-      if (!target.closest(".message__more-list") && !target.closest(".message__more-btn") && document.querySelector(".message__more-list")) {
-        document.querySelector(".message__more-list").remove();
-      }
-    });
   }
 
   loadMessages(messages) {
@@ -793,125 +793,6 @@ export default class Widget {
     this.sidebarBtn.querySelector("line").classList.remove("sidebar-opened");
   }
 
-  showFileUploadContainer() {
-    if (
-      this.fileUploadContainerWrapper.classList.contains(
-        "main__file-upload-container-wrapper_hidden"
-      )
-    ) {
-      this.fileUploadContainerWrapper.classList.add(
-        "main__file-upload-container-wrapper_opened"
-      );
-      this.fileUploadContainerWrapper.classList.remove(
-        "main__file-upload-container-wrapper_hidden"
-      );
-      this.sendMessageWrapper.classList.add(
-        "main__send-message-wrapper_container"
-      );
-      this.fileUploadBtn
-        .querySelector(".main__close-file-container-svg-path")
-        .classList.remove("hidden");
-      this.fileUploadBtn
-        .querySelector(".main__open-file-container-svg-path")
-        .classList.add("hidden");
-      this.fileUploadContainer.classList.remove("hidden");
-
-      this.fileUploadInput.addEventListener("change", () =>
-        this.onFileChoose(this.fileUploadInput.files[0])
-      );
-
-      this.fileDropEventListener();
-    } else {
-      this.fileUploadContainerWrapper.classList.remove(
-        "main__file-upload-container-wrapper_opened"
-      );
-      this.fileUploadContainerWrapper.classList.add(
-        "main__file-upload-container-wrapper_hidden"
-      );
-      this.sendMessageWrapper.classList.remove(
-        "main__send-message-wrapper_container"
-      );
-      this.fileUploadBtn
-        .querySelector(".main__close-file-container-svg-path")
-        .classList.add("hidden");
-      this.fileUploadBtn
-        .querySelector(".main__open-file-container-svg-path")
-        .classList.remove("hidden");
-      this.fileUploadInput.value = "";
-      if (this.element.querySelector(".main__file-upload-container-filename")) {
-        this.element
-          .querySelector(".main__file-upload-container-filename")
-          .remove();
-      }
-      this.fileUploadContainer.classList.add("hidden");
-      this.fileUploadContainerWrapper.removeAttribute("style");
-      this.input.classList.remove("hidden");
-    }
-  }
-
-  fileDropEventListener() {
-    const dragenter = (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      e.target.classList.add("is-dragover");
-    };
-
-    const dragover = (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-    };
-
-    const drop = (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-
-      const dt = e.dataTransfer;
-      const files = dt.files;
-
-      e.target.classList.remove("is-dragover");
-      this.onFileChoose(files[0]);
-    };
-
-    const dragleave = (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-
-      e.target.classList.remove("is-dragover");
-    };
-
-    this.fileUploadContainer.addEventListener("dragenter", dragenter, false);
-    this.fileUploadContainer.addEventListener("dragover", dragover, false);
-    this.fileUploadContainer.addEventListener("drop", drop, false);
-    this.fileUploadContainer.addEventListener("dragleave", dragleave, false);
-  }
-
-  onFileChoose(file) {
-    if (this.element.querySelector(".main__file-upload-container-filename")) {
-      return;
-    }
-
-    const text = document.createElement("span");
-    text.classList.add("main__file-upload-container-filename");
-    if (file.name.length > 55) {
-      text.textContent = `${file.name.slice(0, 55).trim()}...`;
-    } else {
-      text.textContent = `${file.name}`;
-    }
-
-    if (this.element.querySelector(".error")) {
-      this.element.querySelector(".error").remove();
-    }
-    this.fileUploadContainerWrapper.style.height = "auto";
-    this.element.querySelector(".main__label").append(text);
-    this.input.classList.add("hidden");
-    this.fileUploadContainer.classList.add("hidden");
-    this.sendMessageWrapper.classList.remove(
-      "main__send-message-wrapper_container"
-    );
-
-    this.uploadedFile = file;
-  }
-
   openSearch(width) {
     this.inputContainer.style.maxWidth = width + "px";
     this.inputContainer.classList.remove("header__input-container_hidden");
@@ -1165,7 +1046,7 @@ export default class Widget {
       text = this.input.value.trim();
     }
 
-    if (!this.uploadedFile) {
+    if (!obj.uploadedFile) {
       if (author === "user") {
         if (
           new RegExp(
@@ -1184,11 +1065,11 @@ export default class Widget {
         }
       }
     } else {
-      if (this.uploadedFile.type.startsWith("video")) {
+      if (obj.uploadedFile.type.startsWith("video")) {
         type = "video";
-      } else if (this.uploadedFile.type.startsWith("audio")) {
+      } else if (obj.uploadedFile.type.startsWith("audio")) {
         type = "audio";
-      } else if (this.uploadedFile.type.startsWith("image")) {
+      } else if (obj.uploadedFile.type.startsWith("image")) {
         type = "image";
       } else {
         type = "file";
@@ -1220,18 +1101,18 @@ export default class Widget {
     }
 
     if (newMessageData.type === "file") {
-      newMessageData.size = this.uploadedFile.size;
+      newMessageData.size = obj.uploadedFile.size;
     }
 
     if (newMessageData.author === "bot" && newMessageData.type === "image") {
       newMessageData.file = file;
     }
 
-    if (this.uploadedFile) {
-      newMessageData.file = this.uploadedFile.name;
+    if (obj.uploadedFile) {
+      newMessageData.file = obj.uploadedFile.name;
 
       const formData = new FormData();
-      formData.append("file", this.uploadedFile);
+      formData.append("file", obj.uploadedFile);
       await this.api.upload(formData);
     }
 
@@ -1281,9 +1162,9 @@ export default class Widget {
         scrollToBottom(obj.simpleBarElement);
       }
 
-      if (this.uploadedFile) {
+      if (obj.uploadedFile) {
         this.fileUploadInput.value = "";
-        this.uploadedFile = null;
+        obj.uploadedFile = null;
 
         this.fileUploadContainerWrapper.classList.remove(
           "main__file-upload-container-wrapper_opened"
@@ -1301,13 +1182,9 @@ export default class Widget {
         this.fileUploadBtn
           .querySelector(".main__open-file-container-svg-path")
           .classList.remove("hidden");
-        if (
-          this.element.querySelector(".main__file-upload-container-filename")
-        ) {
-          this.element
-            .querySelector(".main__file-upload-container-filename")
-            .remove();
-        }
+        this.element
+          .querySelector(".main__file-upload-container-filename")
+          .remove();
         this.input.classList.remove("hidden");
         this.fileUploadContainer.classList.add("hidden");
       }
