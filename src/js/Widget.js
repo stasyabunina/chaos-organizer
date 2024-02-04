@@ -10,6 +10,8 @@ import scrollToBottom from "./scrollToBottom";
 import "simplebar/dist/simplebar.css";
 import SimpleBar from "simplebar";
 import FileContainer from "./FileContainer";
+import SearchForm from "./SearchForm";
+import loadMessages from "./loadMessages";
 
 import ResizeObserver from "resize-observer-polyfill";
 
@@ -25,7 +27,6 @@ export default class Widget {
     this.element = element;
     this.url = "http://localhost:7070";
     this.api = new WidgetAPI(this.url);
-    this.loadedMessages = [];
   }
 
   bindToDOM() {
@@ -33,12 +34,8 @@ export default class Widget {
     this.sendForm = this.element.querySelector(".main__form");
     this.input = this.element.querySelector(".main__input");
     this.pickEmojiBtn = this.element.querySelector(".main__pick-emoji");
-    this.searchBtn = this.element.querySelector(".header__search-btn");
-    this.searchForm = this.element.querySelector(".header__form");
+    this.searchFormElement = this.element.querySelector(".header__form");
     this.searchInput = this.element.querySelector(".header__input");
-    this.inputContainer = this.element.querySelector(
-      ".header__input-container"
-    );
     this.fileUploadBtn = this.element.querySelector(".main__file-upload-btn");
     this.fileUploadContainerWrapper = this.element.querySelector(
       ".main__file-upload-container-wrapper"
@@ -73,9 +70,9 @@ export default class Widget {
     this.declareFocusedElement();
 
     await this.getMessages();
-    this.loadMessages(this.messages);
-    state.categoryMessages = this.messages;
-    for (const message of this.messages) {
+    loadMessages(state.messages, this.api, this.url, this.list);
+    state.categoryMessages = state.messages;
+    for (const message of state.messages) {
       if (message.isPinned) {
         const newPinned = new Pinned(message, this.api, this.url);
         newPinned.render();
@@ -83,7 +80,8 @@ export default class Widget {
     }
 
     this.fileContainer = new FileContainer(this.fileUploadContainerWrapper);
-    this.renderCategories(this.messages);
+    this.searchForm = new SearchForm(this.searchFormElement, this.api, this.url);
+    this.renderCategories(state.messages);
 
     this.changeLanguage();
 
@@ -113,7 +111,6 @@ export default class Widget {
 
   initEventListeners() {
     this.sendForm.addEventListener("submit", (e) => this.sendMessage(e));
-    this.searchForm.addEventListener("submit", (e) => this.searchMessage(e));
     this.pickEmojiBtn.addEventListener("click", () => this.showEmoji());
 
     this.favoritesCategoryBtn.addEventListener("click", (e) =>
@@ -122,56 +119,13 @@ export default class Widget {
 
     this.sidebarBtn.addEventListener("click", () => this.showSidebar());
     this.closeSidebarBtn.addEventListener("click", () => this.closeSidebar());
-
-    const inputContainerWidth = this.inputContainer.clientWidth;
-    this.inputContainer.style.maxWidth = "0px";
-    this.searchBtn.addEventListener("click", () =>
-      this.openSearch(inputContainerWidth)
-    );
-  }
-
-  loadMessages(messages) {
-    this.areAllVisible = false;
-    if (messages.length !== 0) {
-      if (messages.length < 10) {
-        this.loadedMessagesLength = messages.length;
-
-        for (const message of messages) {
-          const newMessage = new Message(message, this.api, this.url);
-          newMessage.render(this.list, "append");
-
-          this.loadedMessages.push(message);
-
-          if (state.simpleBarElement) {
-            state.simpleBarElement.scrollTop = 31;
-          }
-        }
-      } else {
-        this.loadedMessagesLength = 10;
-
-        const lastMessages = messages.slice(-this.loadedMessagesLength);
-
-        for (const message of lastMessages) {
-          const newMessage = new Message(message, this.api, this.url);
-          newMessage.render(this.list, "append");
-
-          this.loadedMessages.push(message);
-
-          if (state.simpleBarElement) {
-            state.simpleBarElement.scrollTop = 31;
-          }
-        }
-      }
-    } else {
-      this.loadedMessagesLength = 0;
-    }
   }
 
   loadMoreMessages() {
-    this.loadedMessagesLength += 10;
+    state.loadedMessagesLength += 10;
 
     const visibleMessages = state.categoryMessages.slice(
-      -this.loadedMessagesLength
+      -state.loadedMessagesLength
     );
 
     if (visibleMessages.length === state.categoryMessages.length) {
@@ -179,7 +133,7 @@ export default class Widget {
         this.element.querySelectorAll(".message").length ===
         state.categoryMessages.length
       ) {
-        this.areAllVisible = true;
+        state.areAllVisible = true;
         return;
       }
 
@@ -215,7 +169,7 @@ export default class Widget {
   async getMessages() {
     const response = await this.api.getMessages();
     const messages = await response.json();
-    this.messages = Array.from(messages);
+    state.messages = Array.from(messages);
   }
 
   declareFocusedElement() {
@@ -398,7 +352,7 @@ export default class Widget {
     const imagesArr = [];
     const filesArr = [];
 
-    for (const message of this.messages) {
+    for (const message of state.messages) {
       if (message.type === "video") {
         videosArr.push(message);
       }
@@ -683,7 +637,7 @@ export default class Widget {
     this.element
       .querySelectorAll(".message")
       .forEach((message) => message.remove());
-    this.loadedMessages = [];
+    state.loadedMessages = [];
 
     if (
       target
@@ -700,10 +654,10 @@ export default class Widget {
         .querySelector(".aside__item-text")
         .classList.remove("aside__item-text_clicked");
 
-        state.categoryMessages = this.messages;
-      this.loadMessages(this.messages);
+        state.categoryMessages = state.messages;
+      loadMessages(state.messages, this.api, this.url, this.list);
 
-      this.activeCategory = null;
+      state.activeCategory = null;
       return;
     } else {
       if (this.element.querySelector(".aside__item-svg_clicked")) {
@@ -730,35 +684,35 @@ export default class Widget {
 
     if (target.closest(".aside__videos-item-btn")) {
       state.categoryMessages = this.videoMessages;
-      this.loadMessages(this.videoMessages);
+      loadMessages(this.videoMessages, this.api, this.url, this.list);
 
-      this.activeCategory = "video";
+      state.activeCategory = "video";
     } else if (target.closest(".aside__audios-item-btn")) {
       state.categoryMessages = this.audioMessages;
-      this.loadMessages(this.audioMessages);
+      loadMessages(this.audioMessages, this.api, this.url, this.list);
 
-      this.activeCategory = "audio";
+      state.activeCategory = "audio";
     } else if (target.closest(".aside__links-item-btn")) {
       state.categoryMessages = this.linkMessages;
-      this.loadMessages(this.linkMessages);
+      loadMessages(this.linkMessages, this.api, this.url, this.list);
 
-      this.activeCategory = "link";
+      state.activeCategory = "link";
     } else if (target.closest(".aside__images-item-btn")) {
       state.categoryMessages = this.imageMessages;
-      this.loadMessages(this.imageMessages);
+      loadMessages(this.imageMessages, this.api, this.url, this.list);
 
-      this.activeCategory = "image";
+      state.activeCategory = "image";
     } else if (target.closest(".aside__files-item-btn")) {
       state.categoryMessages = this.fileMessages;
-      this.loadMessages(this.fileMessages);
+      loadMessages(this.fileMessages, this.api, this.url, this.list);
 
-      this.activeCategory = "file";
+      state.activeCategory = "file";
     } else if (target.closest(".aside__favorites-item-btn")) {
       await this.getMessages();
 
       const favoriteMessages = [];
 
-      for (const message of this.messages) {
+      for (const message of state.messages) {
         if (message.isFavorite) {
           favoriteMessages.push(message);
         }
@@ -768,14 +722,14 @@ export default class Widget {
 
       state.categoryMessages = this.favoriteMessages;
 
-      this.loadMessages(this.favoriteMessages);
+      loadMessages(this.favoriteMessages, this.api, this.url, this.list);
 
-      this.activeCategory = "favorite";
+      state.activeCategory = "favorite";
     } else {
       state.categoryMessages = this.textMessages;
-      this.loadMessages(this.textMessages);
+      loadMessages(this.textMessages, this.api, this.url, this.list);
 
-      this.activeCategory = "text";
+      state.activeCategory = "text";
     }
   }
 
@@ -791,102 +745,6 @@ export default class Widget {
 
     this.sidebarBtn.querySelector("rect").classList.remove("sidebar-opened");
     this.sidebarBtn.querySelector("line").classList.remove("sidebar-opened");
-  }
-
-  openSearch(width) {
-    this.inputContainer.style.maxWidth = width + "px";
-    this.inputContainer.classList.remove("header__input-container_hidden");
-
-    this.searchBtn.classList.add("header__search-btn_opened");
-
-    const changeBtnType = () => {
-      this.searchBtn.type = "submit";
-    };
-
-    setTimeout(changeBtnType, 200);
-
-    document.addEventListener("click", (e) => {
-      let target = e.target;
-      if (
-        !target.closest(".header__form") &&
-        !target.closest(".message") &&
-        !this.element.querySelector(".main__emoji-picker-wrapper") &&
-        !target.closest(".main__emoji-picker")
-      ) {
-        this.inputContainer.style.maxWidth = "0px";
-        this.inputContainer.classList.add("header__input-container_hidden");
-        this.searchBtn.classList.remove("header__search-btn_opened");
-        this.searchBtn.type = "button";
-      }
-    });
-  }
-
-  async searchMessage(e) {
-    e.preventDefault();
-
-    const response = await this.api.search({
-      str: this.searchInput.value.trim(),
-    });
-    this.element
-      .querySelectorAll(".message")
-      .forEach((message) => message.remove());
-    this.loadedMessages = [];
-
-    if (response.ok) {
-      const searchedMessages = await response.json();
-
-      if (this.searchInput.value.trim() === "") {
-        if (this.activeCategory) {
-          const messages = [];
-          for (const message of this.messages) {
-            if (
-              message.type === this.activeCategory &&
-              this.activeCategory !== "favorite"
-            ) {
-              messages.push(message);
-            } else if (
-              message.isFavorite &&
-              this.activeCategory === "favorite"
-            ) {
-              messages.push(message);
-            }
-          }
-          state.categoryMessages = messages;
-          this.loadMessages(messages);
-        } else {
-          await this.getMessages();
-
-          state.categoryMessages = this.messages;
-          this.loadMessages(this.messages);
-        }
-      } else {
-        if (this.activeCategory) {
-          if (searchedMessages.length !== 0) {
-            const messages = [];
-            for (const message of searchedMessages) {
-              if (
-                message.type === this.activeCategory &&
-                this.activeCategory !== "favorite"
-              ) {
-                messages.push(message);
-              } else if (
-                message.isFavorite &&
-                this.activeCategory === "favorite"
-              ) {
-                messages.push(message);
-              }
-            }
-            state.categoryMessages = messages;
-            this.loadMessages(messages);
-          }
-        } else {
-          if (searchedMessages.length !== 0) {
-            state.categoryMessages = searchedMessages;
-            this.loadMessages(searchedMessages);
-          }
-        }
-      }
-    }
   }
 
   showEmoji() {
@@ -1019,8 +877,8 @@ export default class Widget {
             }
           });
           await this.getMessages();
-          state.categoryMessages = this.messages;
-          this.activeCategory = null;
+          state.categoryMessages = state.messages;
+          state.activeCategory = null;
           this.textMessages = [];
           this.linkMessages = [];
           this.imageMessages = [];
@@ -1028,7 +886,7 @@ export default class Widget {
           this.videoMessages = [];
           this.fileMessages = [];
           this.favoriteMessages = [];
-          this.areAllVisible = false;
+          state.areAllVisible = false;
           if (getCookie("lang") == "eng") {
             text = language.eng.botDeleteResponse;
           } else {
@@ -1125,20 +983,20 @@ export default class Widget {
 
       await this.getMessages();
 
-      if (newMessageData.type === this.activeCategory || !this.activeCategory) {
+      if (newMessageData.type === state.activeCategory || !state.activeCategory) {
         const newMessage = new Message(newMessageData, this.api, this.url);
         newMessage.render(this.list, "append");
       }
 
       state.categoryMessages.push(newMessageData);
 
-      if (this.loadedMessagesLength < 10) {
-        this.loadedMessagesLength += 1;
+      if (state.loadedMessagesLength < 10) {
+        state.loadedMessagesLength += 1;
       }
 
       if (
         this.element.querySelectorAll(".message").length > 10 &&
-        !this.areAllVisible
+        !state.areAllVisible
       ) {
         this.list.firstChild.remove();
       }
