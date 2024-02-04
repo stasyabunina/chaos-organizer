@@ -2,7 +2,7 @@ import linkifyHtml from "linkify-html";
 import { setCookie, getCookie } from "./cookie";
 import Pinned from "./Pinned";
 import language from "./lang";
-import obj from "./obj";
+import state from "./state";
 import scrollToBottom from "./scrollToBottom";
 
 export default class Message {
@@ -183,15 +183,15 @@ export default class Message {
       if (loadData) {
         if (loadData.tagName === "VIDEO") {
           loadData.addEventListener("loadedmetadata", () => {
-            scrollToBottom(obj.simpleBarElement);
+            scrollToBottom(state.simpleBarElement);
           });
         } else if (loadData.tagName === "IMG") {
           loadData.addEventListener("load", () => {
-            scrollToBottom(obj.simpleBarElement);
+            scrollToBottom(state.simpleBarElement);
           });
         }
       } else {
-        scrollToBottom(obj.simpleBarElement);
+        scrollToBottom(state.simpleBarElement);
       }
     }
   }
@@ -370,7 +370,7 @@ export default class Message {
           content.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
         }
 
-        obj.isFullscreen = true;
+        state.isFullscreen = true;
       } else {
         if (document.exitFullscreen) {
           document.exitFullscreen();
@@ -382,7 +382,7 @@ export default class Message {
           document.webkitExitFullscreen();
         }
 
-        obj.isFullscreen = false;
+        state.isFullscreen = false;
       }
     });
 
@@ -398,7 +398,7 @@ export default class Message {
         !document.mozFullScreen &&
         !document.msFullscreenElement
       ) {
-        obj.isFullscreen = false;
+        state.isFullscreen = false;
       }
     }
 
@@ -456,7 +456,7 @@ export default class Message {
     });
 
     const keyNav = (e) => {
-      if (obj.isFullscreen === false) {
+      if (state.isFullscreen === false) {
         return;
       }
       if (e.code === "Space") {

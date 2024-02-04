@@ -1,6 +1,6 @@
 import language from "./lang";
 import { setCookie, getCookie } from "./cookie";
-import obj from "./obj";
+import state from "./state";
 
 export default class Pinned {
   constructor(data, api, url) {
@@ -155,7 +155,7 @@ export default class Pinned {
   findPinnedMessage(evt) {
     evt.preventDefault();
     let pinnedMessage;
-    for (const message of obj.categoryMessages) {
+    for (const message of state.categoryMessages) {
       if (message.isPinned) {
         pinnedMessage = message;
       }
@@ -165,18 +165,15 @@ export default class Pinned {
     } else {
       const checkIfPinnedMessagePresents = () => {
         if (document.querySelector("#pinned")) {
-          console.log(obj.simpleBarElement);
-          console.log(document.querySelector("#pinned"));
-          console.log(document.querySelector(".pinned"));
-          obj.simpleBarElement.scrollTop =
+          state.simpleBarElement.scrollTop =
             document.querySelector("#pinned").offsetTop -
             document.querySelector(".pinned").clientHeight;
-          if (obj.simpleBarElement.scrollTop === 0) {
+          if (state.simpleBarElement.scrollTop === 0) {
             setTimeout(() => {
-              obj.simpleBarElement.scrollTop = 30;
+              state.simpleBarElement.scrollTop = 30;
 
               setTimeout(() => {
-                obj.simpleBarElement.scrollTo({
+                state.simpleBarElement.scrollTo({
                   top:
                     document.querySelector("#pinned").offsetTop -
                     document.querySelector(".pinned").clientHeight,
@@ -188,7 +185,7 @@ export default class Pinned {
 
           return;
         } else {
-          obj.simpleBarElement.scrollTo({
+          state.simpleBarElement.scrollTo({
             top: 30,
             behavior: "smooth",
           });

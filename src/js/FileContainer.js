@@ -1,4 +1,4 @@
-import obj from "./obj";
+import state from "./state";
 
 export default class FileContainer {
   constructor(element) {
@@ -144,6 +144,6 @@ export default class FileContainer {
       "main__send-message-wrapper_container"
     );
 
-    obj.uploadedFile = file;
+    state.uploadedFile = file;
   }
 }

@@ -5,7 +5,7 @@ import "emoji-picker-element";
 import language from "./lang";
 import { setCookie, getCookie } from "./cookie";
 import Pinned from "./Pinned";
-import obj from "./obj";
+import state from "./state";
 import scrollToBottom from "./scrollToBottom";
 import "simplebar/dist/simplebar.css";
 import SimpleBar from "simplebar";
@@ -74,7 +74,7 @@ export default class Widget {
 
     await this.getMessages();
     this.loadMessages(this.messages);
-    obj.categoryMessages = this.messages;
+    state.categoryMessages = this.messages;
     for (const message of this.messages) {
       if (message.isPinned) {
         const newPinned = new Pinned(message, this.api, this.url);
@@ -99,12 +99,12 @@ export default class Widget {
     window.ResizeObserver = ResizeObserver;
 
     const simpleBar = new SimpleBar(this.scrolledDiv);
-    obj.simpleBarElement = simpleBar.getScrollElement();
+    state.simpleBarElement = simpleBar.getScrollElement();
 
-    obj.simpleBarElement.addEventListener("scroll", () => {
+    state.simpleBarElement.addEventListener("scroll", () => {
       if (
-        obj.simpleBarElement.scrollTop <= 30 &&
-        obj.simpleBarElement.scrollTop !== 0
+        state.simpleBarElement.scrollTop <= 30 &&
+        state.simpleBarElement.scrollTop !== 0
       ) {
         this.loadMoreMessages();
       }
@@ -142,8 +142,8 @@ export default class Widget {
 
           this.loadedMessages.push(message);
 
-          if (obj.simpleBarElement) {
-            obj.simpleBarElement.scrollTop = 31;
+          if (state.simpleBarElement) {
+            state.simpleBarElement.scrollTop = 31;
           }
         }
       } else {
@@ -157,8 +157,8 @@ export default class Widget {
 
           this.loadedMessages.push(message);
 
-          if (obj.simpleBarElement) {
-            obj.simpleBarElement.scrollTop = 31;
+          if (state.simpleBarElement) {
+            state.simpleBarElement.scrollTop = 31;
           }
         }
       }
@@ -170,21 +170,21 @@ export default class Widget {
   loadMoreMessages() {
     this.loadedMessagesLength += 10;
 
-    const visibleMessages = obj.categoryMessages.slice(
+    const visibleMessages = state.categoryMessages.slice(
       -this.loadedMessagesLength
     );
 
-    if (visibleMessages.length === obj.categoryMessages.length) {
+    if (visibleMessages.length === state.categoryMessages.length) {
       if (
         this.element.querySelectorAll(".message").length ===
-        obj.categoryMessages.length
+        state.categoryMessages.length
       ) {
         this.areAllVisible = true;
         return;
       }
 
       const lastMessagesNumber = Number(
-        obj.categoryMessages.length.toString().split("").slice(-1)
+        state.categoryMessages.length.toString().split("").slice(-1)
       );
 
       if (lastMessagesNumber === 0) {
@@ -700,7 +700,7 @@ export default class Widget {
         .querySelector(".aside__item-text")
         .classList.remove("aside__item-text_clicked");
 
-      obj.categoryMessages = this.messages;
+        state.categoryMessages = this.messages;
       this.loadMessages(this.messages);
 
       this.activeCategory = null;
@@ -729,27 +729,27 @@ export default class Widget {
       .classList.add("aside__item-text_clicked");
 
     if (target.closest(".aside__videos-item-btn")) {
-      obj.categoryMessages = this.videoMessages;
+      state.categoryMessages = this.videoMessages;
       this.loadMessages(this.videoMessages);
 
       this.activeCategory = "video";
     } else if (target.closest(".aside__audios-item-btn")) {
-      obj.categoryMessages = this.audioMessages;
+      state.categoryMessages = this.audioMessages;
       this.loadMessages(this.audioMessages);
 
       this.activeCategory = "audio";
     } else if (target.closest(".aside__links-item-btn")) {
-      obj.categoryMessages = this.linkMessages;
+      state.categoryMessages = this.linkMessages;
       this.loadMessages(this.linkMessages);
 
       this.activeCategory = "link";
     } else if (target.closest(".aside__images-item-btn")) {
-      obj.categoryMessages = this.imageMessages;
+      state.categoryMessages = this.imageMessages;
       this.loadMessages(this.imageMessages);
 
       this.activeCategory = "image";
     } else if (target.closest(".aside__files-item-btn")) {
-      obj.categoryMessages = this.fileMessages;
+      state.categoryMessages = this.fileMessages;
       this.loadMessages(this.fileMessages);
 
       this.activeCategory = "file";
@@ -766,13 +766,13 @@ export default class Widget {
 
       this.favoriteMessages = favoriteMessages;
 
-      obj.categoryMessages = this.favoriteMessages;
+      state.categoryMessages = this.favoriteMessages;
 
       this.loadMessages(this.favoriteMessages);
 
       this.activeCategory = "favorite";
     } else {
-      obj.categoryMessages = this.textMessages;
+      state.categoryMessages = this.textMessages;
       this.loadMessages(this.textMessages);
 
       this.activeCategory = "text";
@@ -851,12 +851,12 @@ export default class Widget {
               messages.push(message);
             }
           }
-          obj.categoryMessages = messages;
+          state.categoryMessages = messages;
           this.loadMessages(messages);
         } else {
           await this.getMessages();
 
-          obj.categoryMessages = this.messages;
+          state.categoryMessages = this.messages;
           this.loadMessages(this.messages);
         }
       } else {
@@ -876,12 +876,12 @@ export default class Widget {
                 messages.push(message);
               }
             }
-            obj.categoryMessages = messages;
+            state.categoryMessages = messages;
             this.loadMessages(messages);
           }
         } else {
           if (searchedMessages.length !== 0) {
-            obj.categoryMessages = searchedMessages;
+            state.categoryMessages = searchedMessages;
             this.loadMessages(searchedMessages);
           }
         }
@@ -1019,7 +1019,7 @@ export default class Widget {
             }
           });
           await this.getMessages();
-          obj.categoryMessages = this.messages;
+          state.categoryMessages = this.messages;
           this.activeCategory = null;
           this.textMessages = [];
           this.linkMessages = [];
@@ -1046,7 +1046,7 @@ export default class Widget {
       text = this.input.value.trim();
     }
 
-    if (!obj.uploadedFile) {
+    if (!state.uploadedFile) {
       if (author === "user") {
         if (
           new RegExp(
@@ -1065,11 +1065,11 @@ export default class Widget {
         }
       }
     } else {
-      if (obj.uploadedFile.type.startsWith("video")) {
+      if (state.uploadedFile.type.startsWith("video")) {
         type = "video";
-      } else if (obj.uploadedFile.type.startsWith("audio")) {
+      } else if (state.uploadedFile.type.startsWith("audio")) {
         type = "audio";
-      } else if (obj.uploadedFile.type.startsWith("image")) {
+      } else if (state.uploadedFile.type.startsWith("image")) {
         type = "image";
       } else {
         type = "file";
@@ -1101,18 +1101,18 @@ export default class Widget {
     }
 
     if (newMessageData.type === "file") {
-      newMessageData.size = obj.uploadedFile.size;
+      newMessageData.size = state.uploadedFile.size;
     }
 
     if (newMessageData.author === "bot" && newMessageData.type === "image") {
       newMessageData.file = file;
     }
 
-    if (obj.uploadedFile) {
-      newMessageData.file = obj.uploadedFile.name;
+    if (state.uploadedFile) {
+      newMessageData.file = state.uploadedFile.name;
 
       const formData = new FormData();
-      formData.append("file", obj.uploadedFile);
+      formData.append("file", state.uploadedFile);
       await this.api.upload(formData);
     }
 
@@ -1130,7 +1130,7 @@ export default class Widget {
         newMessage.render(this.list, "append");
       }
 
-      obj.categoryMessages.push(newMessageData);
+      state.categoryMessages.push(newMessageData);
 
       if (this.loadedMessagesLength < 10) {
         this.loadedMessagesLength += 1;
@@ -1152,19 +1152,19 @@ export default class Widget {
           .querySelector("video")
           .addEventListener(
             "loadedmetadata",
-            scrollToBottom(obj.simpleBarElement)
+            scrollToBottom(state.simpleBarElement)
           );
       } else if (this.list.lastChild.querySelector("img")) {
         this.list.lastChild
           .querySelector("img")
-          .addEventListener("load", scrollToBottom(obj.simpleBarElement));
+          .addEventListener("load", scrollToBottom(state.simpleBarElement));
       } else {
-        scrollToBottom(obj.simpleBarElement);
+        scrollToBottom(state.simpleBarElement);
       }
 
-      if (obj.uploadedFile) {
+      if (state.uploadedFile) {
         this.fileUploadInput.value = "";
-        obj.uploadedFile = null;
+        state.uploadedFile = null;
 
         this.fileUploadContainerWrapper.classList.remove(
           "main__file-upload-container-wrapper_opened"
