@@ -27,7 +27,7 @@ import catImg6 from "../img/valentin-muller-vp79HHUIahQ-unsplash.jpg";
 export default class Widget {
   constructor(element) {
     this.element = element;
-    this.url = "http://localhost:7070";
+    this.url = "https://chaos-organizer-eoxz.onrender.com";
     this.api = new WidgetAPI(this.url);
   }
 
