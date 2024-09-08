@@ -3,6 +3,8 @@
 Chaos Organizer - глобальный бот-органайзер, предназначенный для хранения информации, поиска и других сервисов: скачивания файлов, уведомления и интеграции с внешними сервисами.
 Органайзер был выполнен как задание-проект во вромя прохождения курса [Netology](https://netology.ru/).
 
+[Backend код](https://github.com/stasyabunina/chaos-organizer_backend)
+
 [https://stasyabunina.github.io/chaos-organizer/](https://stasyabunina.github.io/chaos-organizer/)
 
 ![](chaos-organizer.gif)
@@ -13,8 +15,6 @@ Chaos Organizer - глобальный бот-органайзер, предна
 + DaisyUI
 + JS
 + и другое...
-
-[Backend код](https://github.com/stasyabunina/chaos-organizer_backend)
 
 ---
 
