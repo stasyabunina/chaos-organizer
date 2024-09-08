@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ru" data-theme="dracula">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chaos Organizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap"
+    rel="stylesheet">
+  <link rel="icon" href="/assets/favicon-BdbDHHXH.ico">
+  <link rel="icon" href="/assets/icon-CTyzUxGy.svg" type="image/svg+xml">
+  <script type="module" crossorigin src="/assets/index-CjcSapEu.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CaM8RDLK.css">
+</head>
+
+<body>
+  <div class="widget w-full flex h-screen">
+    <div class="widget__header-main flex flex-col justify-between grow">
+      <header class="widget__header header py-4">
+        <div class="container">
+          <div class="header__wrapper flex justify-between items-center relative">
+            <label for="my-drawer" class="header__sidebar-btn btn btn-ghost btn-circle drawer-button"><svg
+                xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#e5e7eb">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+              </svg>
+            </label>
+            <div class="header__text flex flex-col justify-center items-center absolute right-[50%] translate-x-[50%]">
+              <h1 class="header__name text-2xl font-black">Chaos Organizer</h1>
+              <span class="header__greeting text-sm">Добро пожаловать!</span>
+            </div>
+            <div class="flex relative">
+              <form class="header__form flex items-center mr-2">
+                <button type="button" class="header__search-btn btn btn-ghost btn-circle mr-2" disabled>
+                  <svg width="21px" height="21px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z"
+                      stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+                <div class="header__input-wrapper max-w-0 ease-in-out duration-500 transition-[max-width]">
+                  <div class="header__input-container overflow-hidden">
+                    <input type="text" class="header__input input input-ghost w-full max-w-xs"
+                    placeholder="Поиск по сообщениям..." disabled>
+                  </div>
+                </div>
+              </form>
+              <button class="header__logout-btn btn btn-ghost btn-circle" type="button" disabled>
+                <svg width="21px" height="21px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M14 20H6C4.89543 20 4 19.1046 4 18L4 6C4 4.89543 4.89543 4 6 4H14M10 12H21M21 12L18 15M21 12L18 9"
+                    stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main class="widget__main main relative h-full flex flex-col justify-between overflow-y-hidden">
+        <div class="main__messages-wrapper relative h-full flex py-2 overflow-hidden">
+          <div class="container">
+            <div class="main__messages-scroll-wrapper overflow-y-scroll overflow-x-hidden h-full flex flex-col scrollbar-thin">
+              <ul class="main__messages flex flex-col mt-auto justify-end px-5"></ul>
+            </div>
+          </div>
+        </div>
+        <div class="main__form-wrapper bg-neutral text-neutral-content p-4">
+          <div class="container">
+            <form class="main__form relative">
+              <div class="main__send-message-wrapper flex justify-between">
+                <button class="main__file-btn btn btn-ghost btn-circle mr-1" type="button" disabled>
+                  <svg width="21px" height="21px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path class="main__open-file-container-svg-path"
+                      d="M12 6C12.5523 6 13 6.44772 13 7V11H17C17.5523 11 18 11.4477 18 12C18 12.5523 17.5523 13 17 13H13V17C13 17.5523 12.5523 18 12 18C11.4477 18 11 17.5523 11 17V13H7C6.44772 13 6 12.5523 6 12C6 11.4477 6.44772 11 7 11H11V7C11 6.44772 11.4477 6 12 6Z"
+                      fill="#e5e7eb" />
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                      d="M1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12ZM12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3Z"
+                      fill="#e5e7eb" />
+                    <path class="main__close-file-container-svg-path hidden"
+                      d="M8.00386 9.41816C7.61333 9.02763 7.61334 8.39447 8.00386 8.00395C8.39438 7.61342 9.02755 7.61342 9.41807 8.00395L12.0057 10.5916L14.5907 8.00657C14.9813 7.61605 15.6144 7.61605 16.0049 8.00657C16.3955 8.3971 16.3955 9.03026 16.0049 9.42079L13.4199 12.0058L16.0039 14.5897C16.3944 14.9803 16.3944 15.6134 16.0039 16.0039C15.6133 16.3945 14.9802 16.3945 14.5896 16.0039L12.0057 13.42L9.42097 16.0048C9.03045 16.3953 8.39728 16.3953 8.00676 16.0048C7.61624 15.6142 7.61624 14.9811 8.00676 14.5905L10.5915 12.0058L8.00386 9.41816Z"
+                      fill="#e5e7eb" />
+                  </svg>
+                </button>
+                <label class="main__label mr-2 grow flex">
+                  <input name="message" type="text"
+                    class="main__input input input-primary w-full max-w-full border-none focus-visible:outline-none focus-visible:border-none"
+                    placeholder="Введите сообщение..." disabled>
+                </label>
+                <button type="button" class="main__pick-emoji btn btn-ghost btn-circle mr-1" disabled>
+                  <svg width="21px" height="21px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M8.5 11C9.32843 11 10 10.3284 10 9.5C10 8.67157 9.32843 8 8.5 8C7.67157 8 7 8.67157 7 9.5C7 10.3284 7.67157 11 8.5 11Z"
+                      fill="#e5e7eb" />
+                    <path
+                      d="M17 9.5C17 10.3284 16.3284 11 15.5 11C14.6716 11 14 10.3284 14 9.5C14 8.67157 14.6716 8 15.5 8C16.3284 8 17 8.67157 17 9.5Z"
+                      fill="#e5e7eb" />
+                    <path
+                      d="M8.88875 13.5414C8.63822 13.0559 8.0431 12.8607 7.55301 13.1058C7.05903 13.3528 6.8588 13.9535 7.10579 14.4474C7.18825 14.6118 7.29326 14.7659 7.40334 14.9127C7.58615 15.1565 7.8621 15.4704 8.25052 15.7811C9.04005 16.4127 10.2573 17.0002 12.0002 17.0002C13.7431 17.0002 14.9604 16.4127 15.7499 15.7811C16.1383 15.4704 16.4143 15.1565 16.5971 14.9127C16.7076 14.7654 16.8081 14.6113 16.8941 14.4485C17.1387 13.961 16.9352 13.3497 16.4474 13.1058C15.9573 12.8607 15.3622 13.0559 15.1117 13.5414C15.0979 13.5663 14.9097 13.892 14.5005 14.2194C14.0401 14.5877 13.2573 15.0002 12.0002 15.0002C10.7431 15.0002 9.96038 14.5877 9.49991 14.2194C9.09071 13.892 8.90255 13.5663 8.88875 13.5414Z"
+                      fill="#e5e7eb" />
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                      d="M12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23ZM12 20.9932C7.03321 20.9932 3.00683 16.9668 3.00683 12C3.00683 7.03321 7.03321 3.00683 12 3.00683C16.9668 3.00683 20.9932 7.03321 20.9932 12C20.9932 16.9668 16.9668 20.9932 12 20.9932Z"
+                      fill="#e5e7eb" />
+                  </svg>
+                </button>
+                <button class="main__send-btn btn btn-ghost btn-circle" disabled>
+                  <svg width="22px" height="22px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M10.5004 11.9998H5.00043M4.91577 12.2913L2.58085 19.266C2.39742 19.8139 2.3057 20.0879 2.37152 20.2566C2.42868 20.4031 2.55144 20.5142 2.70292 20.5565C2.87736 20.6052 3.14083 20.4866 3.66776 20.2495L20.3792 12.7293C20.8936 12.4979 21.1507 12.3822 21.2302 12.2214C21.2993 12.0817 21.2993 11.9179 21.2302 11.7782C21.1507 11.6174 20.8936 11.5017 20.3792 11.2703L3.66193 3.74751C3.13659 3.51111 2.87392 3.39291 2.69966 3.4414C2.54832 3.48351 2.42556 3.59429 2.36821 3.74054C2.30216 3.90893 2.3929 4.18231 2.57437 4.72906L4.91642 11.7853C4.94759 11.8792 4.96317 11.9262 4.96933 11.9742C4.97479 12.0168 4.97473 12.0599 4.96916 12.1025C4.96289 12.1506 4.94718 12.1975 4.91577 12.2913Z"
+                      stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+              </div>
+              <div class="main__file-wrapper p-5 justify-center items-center hidden">
+                <label
+                  class="main__file-container w-full h-full p-9 flex flex-col items-center justify-center border-[1px] border-dashed border-[#e5e7eb] rounded-xl cursor-pointer">
+                  <input type="file" name="file" class="main__file-input hidden" disabled>
+                  <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    class="mb-3">
+                    <path d="m8 12 4 4 4-4" stroke="#e5e7eb" stroke-width="1.5" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                    <path d="M12 16V4M19 17v.6c0 1.33-1.07 2.4-2.4 2.4H7.4C6.07 20 5 18.93 5 17.6V17" stroke="#e5e7eb"
+                      stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" />
+                  </svg>
+                  <span class="main__file-text text-center">Перетащите файл сюда или<br>выберите файл</span>
+                </label>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+    <div class="drawer w-auto z-50">
+      <input id="my-drawer" type="checkbox" class="drawer-toggle" disabled />
+      <div class="drawer-side">
+        <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+        <ul class="menu px-8 bg-base-200 text-base-content min-h-full w-80 p-4">
+          <li data-type="text">
+            <button class="btn btn-ghost flex justify-start mr-2" disabled>Текст<sup class="text-[#b3b5b8]">0</sup></button>
+          </li>
+          <li data-type="link">
+            <button class="btn btn-ghost flex justify-start mr-2" disabled>Ссылки<sup class="text-[#b3b5b8]">0</sup></button>
+          </li>
+          <li data-type="image">
+            <button class="btn btn-ghost flex justify-start mr-2" disabled>Изображения<sup class="text-[#b3b5b8]">0</sup></button>
+          </li>
+          <li data-type="audio">
+            <button class="btn btn-ghost flex justify-start mr-2" disabled>Аудио<sup class="text-[#b3b5b8]">0</sup></button>
+          </li>
+          <li data-type="video">
+            <button class="btn btn-ghost flex justify-start mr-2" disabled>Видео<sup class="text-[#b3b5b8]">0</sup></button>
+          </li>
+          <li data-type="file">
+            <button class="btn btn-ghost flex justify-start mr-2" disabled>Файлы<sup class="text-[#b3b5b8]">0</sup></button>
+          </li>
+          <li data-type="favorite">
+            <button class="btn btn-ghost flex justify-start mr-2" disabled>Избранное<sup class="text-[#b3b5b8]">0</sup></button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+</body>
+
+</html>
