@@ -1,11 +1,11 @@
 export const formatBytes = (bytes) => {
-    let units = ["B", "KB", "MB", "GB", "TB", "PB"];
+	let units = ["B", "KB", "MB", "GB", "TB", "PB"];
 
-    let i = 0;
+	let i = 0;
 
-    for (i; bytes > 1024; i++) {
-        bytes /= 1024;
-    }
+	for (i; bytes > 1024; i++) {
+		bytes /= 1024;
+	}
 
-    return bytes.toFixed(2) + " " + units[i];
+	return bytes.toFixed(2) + " " + units[i];
 };

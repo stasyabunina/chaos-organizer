@@ -1,12 +1,13 @@
-import { defineConfig } from 'vite';
-import tailwindcss from 'tailwindcss';
+import { defineConfig } from "vite";
+import tailwindcss from "tailwindcss";
+import { ViteMinifyPlugin } from "vite-plugin-minify";
 
 export default defineConfig({
-    plugins: [],
-    css: {
-        postcss: {
-            plugins: [tailwindcss()],
-        },
-    },
-    base: '',
-})
+	plugins: [ViteMinifyPlugin({})],
+	css: {
+		postcss: {
+			plugins: [tailwindcss()],
+		},
+	},
+	base: "",
+});

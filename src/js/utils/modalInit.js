@@ -1,6 +1,6 @@
-import Modal from '../Modal';
+import Modal from "../Modal";
 
 export function modalInit() {
-    const modal = new Modal();
-    modal.init();
+	const modal = new Modal();
+	modal.init();
 }

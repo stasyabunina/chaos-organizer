@@ -1,5 +1,5 @@
 export default function errorToast(message) {
-  return `<div class="toast toast-top toast-center z-[70]">
+	return `<div class="toast toast-top toast-center z-[70]">
     <div class="alert alert-error">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -14,5 +14,5 @@ export default function errorToast(message) {
       </svg>
       <span>${message}</span>
     </div>
-  </div>`
+  </div>`;
 }
